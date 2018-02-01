@@ -27,7 +27,7 @@ def DMatrix(df, dist) :
     n = df.shape[0]
     dmatrix = pd.DataFrame([])
     for i in range(0, n) :
-        dmatrix = pd.concat([dmatrix, DVector(df, df.iloc[i,:], JaccardIndex)],axis=1)
+        dmatrix = pd.concat([dmatrix, DVector(df, df.iloc[i,:], dist)],axis=1)
 
     return dmatrix
     
