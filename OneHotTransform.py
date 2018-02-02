@@ -20,7 +20,7 @@ def OneHotName(df) :
 # 1. Fill NaN as string "NULL" and make it as one possible value.
 # 2. Do not affect ID column if applicable
 # 3. Extract one-hot feature name, formatted as "[feature]_[value]"
-# 4. By default in pandas, pd.unique and astype('category') will proceed data by lexical order. 
+# 4. By default in pandas, pd.unique and astype('category') and fractorized(sort=True) will proceed data by lexical order. 
 #    This ensure the correctness of the rules. 
 # Return: 
 #   onehot_df: a DataFrame of one-hot array if 'sparse=False';
@@ -30,7 +30,7 @@ def OneHotTransform(df, ID=None, sparse=False) :
     df_data  = df.drop(ID,axis=1) if ID else df
     df_filled = df_data.fillna('NULL').apply(lambda x: x.astype(np.str),axis=0)
     onehot_names = OneHotName(df_filled)
-    df_factorized = df_filled.apply(lambda x: x.astype('category',ordered=True).factorize()[0],axis=0)
+    df_factorized = df_filled.apply(lambda x: x.astype('category',ordered=True).factorize(sort=True)[0],axis=0)
     enc = preprocessing.OneHotEncoder(categorical_features='all')
     enc.fit(df_factorized)
     onehot_data = enc.transform(df_factorized)
