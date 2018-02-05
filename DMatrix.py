@@ -6,8 +6,9 @@ def JaccardIndex(X, Y) :
     assert type(X) == pd.Series and type(Y) == pd.Series and len(X) == len(Y)
     name_X = X.loc[X==1].index
     name_Y = Y.loc[Y==1].index
-    return float(np.intersect1d(name_X,name_Y).size) / float(np.union1d(name_X,name_Y).size)  
-
+    numerator = float(np.intersect1d(name_X,name_Y).size)
+    denominator = float(np.union1d(name_X,name_Y).size)  
+    return numerator / (denominator + 0.00001)
 
 # DMatrix
 # Input: 
