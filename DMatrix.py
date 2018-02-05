@@ -33,10 +33,11 @@ def DMatrix(df, dist) :
     return dmatrix
     
 ##### For reference. 
+    
 def TopColumns(X, m) :
 
     def TopIndices(X, m) :
-        topn = pd.DataFrame(X.sort_values().index.values[:m]).transpose()
+        topn = pd.DataFrame(X.sort_values(ascending=False).index.values[:m]).transpose()
         return topn
 
     topn = pd.DataFrame()
@@ -44,3 +45,4 @@ def TopColumns(X, m) :
         topn = topn.append(TopIndices(X.loc[i,:], m))
     topn.index = X.index
     return topn
+
