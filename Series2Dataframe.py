@@ -12,7 +12,7 @@ import numpy as np
 #   The data frame shape will be (N-k, k+1). The first k elements will have no corresponding Xts
 #
 def Series2Dataframe(S, k ) :
-    assert type(S) == pd.Series
+    assert type(S) == pd.Series, 'type erroe: S must be pd.Series'
     out = pd.DataFrame(np.zeros([N - k, k + 1]) )
     for i in range(k, S.size) :
         out.iloc[i-k, :] = pd.Series(S[i-k:i+1].values, index=range(4))
