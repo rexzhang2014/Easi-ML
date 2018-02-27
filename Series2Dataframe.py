@@ -11,11 +11,14 @@ import numpy as np
 #   Model can combine those Xts with any other Xp at time t to predict Y
 #   The data frame shape will be (N-k, k+1). The first k elements will have no corresponding Xts
 #
-def Series2Dataframe(S, k ) :
-    assert type(S) == pd.Series, 'type error: S must be pd.Series'
+def Series2Dataframe(S, **kwargs ) :
+    assert type(S) == pd.Series, 'type erroe: S must be pd.Series'
+    N = S.size
+    k = kwargs["k"]
     out = pd.DataFrame(np.zeros([N - k, k + 1]) )
     for i in range(k, S.size) :
-        out.iloc[i-k, :] = pd.Series(S[i-k:i+1].values, index=range(4))
+        out.iloc[i-k, :] = pd.Series(S[i-k:i+1].values, index=range(k + 1))
         if i % 1000 == 0 :
             print("elapsed iter : " + str(i))
     return out
+    
