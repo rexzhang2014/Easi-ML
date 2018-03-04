@@ -3,7 +3,7 @@
 # Preprocessing
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing 
+from sklearn import preprocessing
 
 #################################################################################
 ##FUNCTIONS
@@ -18,7 +18,7 @@ def OneHotName(df) :
         c = df[col]
         for u in np.unique(c) :
             names = names.append( pd.Series(col + ':' + str(u)) )
-    names.index = range(0,names.shape[0])     
+    names.index = range(0,names.shape[0])
     return names
 
 
@@ -29,23 +29,23 @@ def OneHotData(df, names) :
         for j in df.columns :
             onehot_col = names.index[names.where(names==j + ':' + str(df[j][i])).notnull()]
             onehot.iloc[i,onehot_col] = 1
-            
-    return onehot  
-    
-    
-# Input: 
+
+    return onehot
+
+
+# Input:
 #    df: a DataFrame to be transformed
 #    ID: the ID column if it is included in df; Default None
 #    sparse: logically determine return a sparse matrix or a DataFrame; Default False
 #    dropNaN: logic, convert NaN to 'NULL' if False, otherwise exclude it in result set
-# Rules: 
+# Rules:
 # 0. assume all columns in df need be transformed and they will be changed to np.str type
 # 1. Fill NaN as string "NULL" and make it as one possible value.
 # 2. Do not affect ID column if applicable
 # 3. Extract one-hot feature name, formatted as "[feature]_[value]"
-# 4. By default in pandas, pd.unique and astype('category') will proceed data by lexical order. 
-#    This ensure the correctness of the rules. 
-# Return: 
+# 4. By default in pandas, pd.unique and astype('category') will proceed data by lexical order.
+#    This ensure the correctness of the rules.
+# Return:
 #   onehot_df: a DataFrame of one-hot array if 'sparse=False';
 #      otherwise a list of [sparse_matrix, columns]
 def OneHotTransform(df, ID=None, sparse=False, dropNaN=False) :
@@ -53,21 +53,21 @@ def OneHotTransform(df, ID=None, sparse=False, dropNaN=False) :
     df_data  = df.drop(ID,axis=1) if ID else df
     df_filled = df_data.fillna('NULL').apply(lambda x: x.astype(np.str),axis=0)
     onehot_names = OneHotName(df_filled)
-    
+
     df_factorized = df_filled.apply(lambda x: x.astype('category',ordered=True).factorize(sort=True)[0],axis=0)
 
     onehot_dict = OneHotName(df_factorized)
-    
+
     onehot_data = OneHotData(df_factorized, onehot_dict)
-    
-    if not sparse : 
+
+    if not sparse :
        onehot_data.columns = onehot_names.values
        if dropNaN :
           onehot_names = onehot_names.drop(onehot_names.index[onehot_names.str.contains('NULL')])
           onehot_data = onehot_data[onehot_names]
     return [onehot_data, onehot_names] if sparse else onehot_data
 
-###Preprocessing 
+###Preprocessing
 def minmax(x) :
     #x = np.array(x,np.float64)
     #x0 = float(x)
@@ -91,7 +91,7 @@ def normalize(data, features, norm=None) :
 ###
 #Clean the column which is actually numbers but contains comma in million and billions
 ###
-def cleaning(x) : 
+def cleaning(x) :
     #print(type(x.iloc[0]))
     if type(x.iloc[0]) == np.unicode or type(x.iloc[0]) == np.str :
         #print(x)
@@ -108,18 +108,20 @@ def clean_cell(cell) :
     #    return cell.str.replace("[(), /\'\"]","")
     else :
         return cell
-        
+
 # discretize
-# Input: 
+# Input:
 #   V: the vector to be discretized
 #   n: number of bins
 #   way: currently support 'equal_width' only
-# Rules: 
+# Rules:
 #   ways are stored in dict and call by way string
-#   
+#
 # Return:
-#   tagv: use the cut-off as bin tags, not simply transform the digits into 
-#     integers. It can be used into 
+#   tagv: use the cut-off as bin tags, not simply transform the digits into
+#     integers. It can be used into
+'''
+# Old version, depricated
 def discretize(V, n, way) :
     def equal_width(V, n) :
         # V[V > 40000] = np.nan
@@ -128,20 +130,43 @@ def discretize(V, n, way) :
         if max_V > 0 :
             tags = np.array(range(1, n+2)) * max_V / n
             #print(tags)
-            tagv = V.apply(lambda x : tags[x * n / max_V ] if not np.isnan(x) else x)
+            tagv = V.apply(lambda x : tags[int(x * n / max_V) ] if not np.isnan(x) else x)
         else :
             tagv = V.astype(np.float64)
-        #print(tagv)        
+        #print(tagv)
         #tags = range(1,n+1) * max(V) / n
         #offset = V * n / max(V)
         #tagv = V.apply(lambda x : tags[np.floor(x * n / max(V))])
         print(tagv.index[tagv.isnull()])
         return tagv
     def equal_freq(V, n) :
-        return V        
+        return V
     dic = {'equal_width': equal_width, 'equal_freq': equal_freq}
     return dic[way](V, n)
+'''
 
+def discretize(V, n, way, **kwargs) :
+
+    def equal_width(V, n) :
+        # V[V > 40000] = np.nan
+        # N = V.notnull().sum()
+        max_V = np.max(V)
+        if max_V > 0 :
+            tags = np.array(range(1, n+2)) * max_V / n
+            #print(tags)
+            tagv = V.apply(lambda x : tags[int(x * n / max_V) ] if not np.isnan(x) else x)
+        else :
+            tagv = V.astype(np.float64)
+        #print(tagv)
+        #tags = range(1,n+1) * max(V) / n
+        #offset = V * n / max(V)
+        #tagv = V.apply(lambda x : tags[np.floor(x * n / max(V))])
+        print(tagv.index[tagv.isnull()])
+        return tagv
+    def equal_freq(V, n) :
+        return V
+    dic = {'equal_width': equal_width, 'equal_freq': equal_freq}
+    return dic[way](V, n)
 #assume input df contains only continous features
 def DiscretizeDataFrame(df, n, way) :
     df = df.applymap(clean_cell) \
@@ -149,28 +174,28 @@ def DiscretizeDataFrame(df, n, way) :
         .apply(lambda x : x.astype(np.float64), axis=0) \
         .apply(discretize,  args=(n, way), axis=0)
     return df
-    
+
 #Build Features
 def BuildFeatures(data, params) :
-    
+
     cat_features = params["cat_features"]
-    con_features = params["con_features"]    
+    con_features = params["con_features"]
     label        = params["label"]
     n_disc       = params["n_disc"]
-    way_disc     = params["way_disc"]    
+    way_disc     = params["way_disc"]
     sparse       = params["sparse"]
     dropNaN      = params["dropNaN"]
-    
+
     data_onehot = OneHotTransform(data[cat_features], sparse=sparse, dropNaN=dropNaN)
     data_discretized = DiscretizeDataFrame(data[con_features], n_disc, way_disc)
-    
+
     X = pd.concat([data_onehot, data_discretized], axis=1)
-    
+
     X_norm = normalize(X, con_features, minmax)
-    
+
     if label != None and label != "" :
         Y_full = OneHotTransform(data[label], sparse=sparse, dropNaN=dropNaN)
-    
+
     Y = pd.DataFrame(Y_full.iloc[:,0])
-   
+
     return X_norm, Y, pd.Series(data_onehot.columns)
