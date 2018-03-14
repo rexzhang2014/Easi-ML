@@ -109,6 +109,28 @@ gbdt_parameters = [{'n_estimators'  : [20, 100],
                     'max_features'  : ['auto']}]
 scores = ['roc_auc']
 #%%
+from sklearn.svm import SVC
+svc_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
+                     'C': [1, 10]}]
+
+#scores = ['roc_auc']
+score = 'roc_auc'
+clf = GridSearchCV(SVC( probability=True),
+                   svc_parameters, cv=3,
+                   scoring= score ) #'%s_macro' % score)
+clf.fit(X_train, Y_train)
+
+
+print("Best parameters set found on development set:")
+
+bestModel = clf.best_estimator_
+bestParam = clf.best_params_
+
+print(bestParam)
+
+
+
+#%%
 
 def GBDT(X_train, Y_train, params=None, model_dump=False) :
     gbdt_parameters = [{'n_estimators'  : [50, 100, 300, 600],
