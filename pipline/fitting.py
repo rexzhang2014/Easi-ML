@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
 import os
-
+from datetime import datetime
 from sklearn.model_selection import GridSearchCV
 # Import GBDT
 from sklearn.ensemble import GradientBoostingClassifier
@@ -201,8 +201,11 @@ def GBDT(X_train, Y_train, params=None, model_dump=False) :
     clf = GridSearchCV(GradientBoostingClassifier(),
                        gbdt_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
+    tic = datetime.now()
     clf.fit(X_train, Y_train)
+    toc = datetime.now()
 
+    print("GBDT Grid Search runs " + str(toc - tic))
 
     print("Best parameters set found on development set:")
 
@@ -250,7 +253,12 @@ def RF(X_train, Y_train, params=None, model_dump=False) :
     clf = GridSearchCV(RandomForestClassifier(),
                        rf_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
+    tic = datetime.now()
     clf.fit(X_train, Y_train)
+    toc = datetime.now()
+
+    print("RF Grid Search runs " + str(toc - tic))
+
 
 
     print("Best parameters set found on development set:")
@@ -273,7 +281,12 @@ def SVM(X_train, Y_train, params=None, model_dump=False) :
     clf = GridSearchCV(SVC( probability=True),
                        svc_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
+    tic = datetime.now()
     clf.fit(X_train, Y_train)
+    toc = datetime.now()
+
+    print("SVC Grid Search runs " + str(toc - tic))
+
 
 
 
