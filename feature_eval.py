@@ -44,6 +44,9 @@ def feature_eval_correlation_heatmap(ds, method='spearman', cmap=cm.Blues,
             
     plt.colorbar(mappable=heatmap,cax=None,ax=None,shrink=0.5)
     
+    plt.xticks(range(N))
+    plt.yticks(range(N))
+    
     if outpath : 
         plt.savefig(outpath)
     else : 
