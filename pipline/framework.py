@@ -28,8 +28,8 @@ import numpy as np
 import pandas as pd
 #from sklearn import linear_model
 import matplotlib.pyplot as plt
-import fitting as ft
-import preprocessing as pp
+import pipline.fitting as ft
+import pipline.preprocessing as pp
 from datetime import datetime
 
 from sklearn.externals import joblib
