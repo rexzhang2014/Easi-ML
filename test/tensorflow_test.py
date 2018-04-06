@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  3 10:27:10 2018
-
-@author: 1542483
-"""
 
 #%%
 import pandas as pd
@@ -25,29 +20,29 @@ iris_data = pd.concat([iris_X, iris_Y], axis=1)
 def BuildDataSet(data, X, Y, frac, keys = None) :
     if keys != None :
         data.index = data[keys]
-        
+
     X_train = pd.DataFrame()
-    for val_Y in np.unique(data[Y]) : 
-            
-        X_train = X_train.append(data.loc[data[Y] == val_Y,X]  
-                                 .sample(frac = frac, 
+    for val_Y in np.unique(data[Y]) :
+
+        X_train = X_train.append(data.loc[data[Y] == val_Y,X]
+                                 .sample(frac = frac,
                                          replace = False,
                                          random_state=0))
-        
-        
-    print(X_train.shape)    
+
+
+    print(X_train.shape)
         #X_train_1 = data.loc[data[Y] == 1,X].sample(frac = frac, replace = False,random_state=0)
         #print(X_train_1.shape)
-        
+
     Y_train = data.loc[data.index.isin(X_train.index), Y]
     print(Y_train.shape)
     #Y_train_1 = data.loc[data.index.isin(X_train_1.index), Y]
     #print(Y_train_1.shape)
-        
-    X_test = data.loc[~data.index.isin(X_train.index),X] 
+
+    X_test = data.loc[~data.index.isin(X_train.index),X]
     Y_test = data.loc[data.index.isin(X_test.index), Y]
-    
-    return X_train, Y_train, X_test, Y_test 
+
+    return X_train, Y_train, X_test, Y_test
 
 
 def train_input_fn(features, labels, batch_size):
@@ -58,7 +53,7 @@ def train_input_fn(features, labels, batch_size):
 def eval_input_fn(features, labels, batch_size) :
     dataset = tf.data.Dataset.from_tensor_slices((dict(features), labels))
     dataset = dataset.shuffle(buffer_size=1000).repeat(count=None).batch(batch_size)
-    #return dataset.shuffle(buffer_size=1000).repeat(count=None).batch(batch_size) 
+    #return dataset.shuffle(buffer_size=1000).repeat(count=None).batch(batch_size)
     return dataset.make_one_shot_iterator().get_next()
 
 
@@ -83,7 +78,7 @@ classifier = tf.estimator.DNNClassifier(
 #%%
 X_train, Y_train, X_test, Y_test = BuildDataSet(iris_data, col_X, col_Y[0],
                                                 frac=0.7)
- 
+
 
 #%%
 
