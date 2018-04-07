@@ -33,6 +33,15 @@ import pipline.preprocessing as pp
 from datetime import datetime
 
 from sklearn.externals import joblib
+
+class WellDefinedDataSets(object) :
+    def __init__(self, X_train, Y_train, X_test, Y_test) :
+        self.X_train = X_train
+        self.Y_train = Y_train
+        self.X_test = X_test
+        self.Y_test = Y_test
+
+
 #params: a dict of all parameters
 #  minimal setting of params:
 #    1. data desc: cat_features,  con_features, label
@@ -89,7 +98,7 @@ def EasiML_Modeling(data_ori, params) :
     print("total elapsed time: " + str(elapsed_time))
 
     joblib.dump(best[1],"bestmodel.m")
-    return best , onehot_names
+    return best , onehot_names, WellDefinedDataSets(X_train, Y_train, X_test, Y_test)
 
 ##data unlabeled data to be predicted
 ## params: at least include cat_features, con_features

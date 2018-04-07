@@ -51,7 +51,7 @@ def train_input_fn(features, labels, batch_size):
     dataset = dataset.shuffle(buffer_size=1000).repeat(count=None).batch(batch_size)
     return dataset.make_one_shot_iterator().get_next()
 
-def eval_input_fn(features, labels, batch_size) :
+def eval_input_fn(features, labels=None, batch_size=10) :
     """An input function for evaluation or prediction"""
     features=dict(features)
     if labels is None:
@@ -125,7 +125,7 @@ for pred_dict, expec in zip(predictions, expected):
     class_id = pred_dict['class_ids'][0]
     probability = pred_dict['probabilities'][class_id]
 
-    print(template.format(iris_data.SPECIES[class_id],
+    print(template.format(iris_data.loc[class_id,'Species'],
                           100 * probability, expec))
 #%%
 from pyhive import hive
