@@ -181,23 +181,29 @@ def CART(X_train, Y_train, params=None, model_dump=False) :
     if model_dump :
         joblib.dump(cart,"cart.m")
     return cart
-# GBDT
-
-def GBDT(X_train, Y_train, params=None, model_dump=False) :
-
-    gbdt_parameters = [{'n_estimators'  : [50, 100, 300, 600],
-                        'learning_rate' : [0.05, 0.1, 0.5],
-                        'max_depth'     : [1, 3, 6],
-                        'max_features'  : ['auto']}]
-    '''
-    gbdt_parameters = [{'n_estimators'  : [50, 100], #, 300, 600],
-                        'learning_rate' : [0.05, 0.1], #, 0.5],
-                        'max_depth'     : [1, 3], #, 6],
-                        'max_features'  : ['auto']}]
-    '''
+###########################################################################
+##
+#############################################################################
+def GBDT(X_train, Y_train, model_dump=False, comprehensive=False, **kwargs) :
+    sqrt_cn = int(np.floor(np.sqrt(X_train.shape[1])))
+    oneten_cn = int(X_train.shape[1] / 10)
+    if comprehensive :
+        
+        gbdt_parameters = [{'n_estimators'  : [100, 300, 600, 1000],
+                            'learning_rate' : [0.05, 0.1, 0.5],
+                            'max_depth'     : [1, 4, 8],
+                            'max_features'  : [sqrt_cn, oneten_cn, 'auto']}]
+    else : 
+        gbdt_parameters = [{'n_estimators'  : [100, 300], #, 300, 600],
+                            'learning_rate' : [0.05, 0.1], #, 0.5],
+                            'max_depth'     : [1, 6], #, 6],
+                            'max_features'  : [sqrt_cn,'auto']}]
+    
 
     #scores = ['roc_auc']
-    score = params["score"] #'roc_auc'
+    #score = params["score"] #'roc_auc'
+    
+    score = kwargs["score"]
     clf = GridSearchCV(GradientBoostingClassifier(),
                        gbdt_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
@@ -213,43 +219,24 @@ def GBDT(X_train, Y_train, params=None, model_dump=False) :
     bestParam = clf.best_params_
     print(bestParam)
     return bestModel, bestParam
-    '''
-def GBDT(X_train, Y_train, params=None, model_dump=False) :
-    if params :
-        n_estimators, learning_rate,  max_depth,  max_features = params
+
+def RF(X_train, Y_train, model_dump=False, comprehensive=False, **kwargs) :
+    sqrt_cn = int(np.floor(np.sqrt(X_train.shape[1])))
+    oneten_cn = int(X_train.shape[1] / 10)
+
+    if comprehensive :
+                
+        rf_parameters = [{'n_estimators'  : [100, 300, 600, 1000],
+                            'max_depth'     : [4, 8, 16, 32],
+                            'max_features'  : [sqrt_cn, oneten_cn, 'auto']}]
     else :
-        n_estimators, learning_rate,  max_depth,  max_features = [300, 0.01, 3, 'auto']
-    gbdt = GradientBoostingClassifier(n_estimators=n_estimators,
-                                      learning_rate=learning_rate,
-                                      max_depth=max_depth, random_state=0,
-                                      max_features=max_features).fit(X_train, Y_train)
-    if model_dump :
-        joblib.dump(gbdt,"gbdt.m")
-    return gbdt
-    '''
-
-# Random Forest
-'''
-def RF(X_train, Y_train, params=None, model_dump=False) :
-    n_estimators, max_depth = params
-    rf = RandomForestClassifier(n_estimators=n_estimators,
-                                max_depth=max_depth).fit(X_train, Y_train)
-    if model_dump :
-        joblib.dump(rf,"rf.m")
-    return rf
-'''
-def RF(X_train, Y_train, params=None, model_dump=False) :
-
-    rf_parameters = [{'n_estimators'  : [50, 100, 300, 600],
-                        'max_depth'     : [1, 6, 10, 20],
-                        'max_features'  : ['auto']}]
-    '''
-    rf_parameters = [{'n_estimators'  : [50, 100],
-                      'max_depth'     : [1, 6],
-                      'max_features'  : ['auto']}]
-    '''
+        rf_parameters = [{'n_estimators'  : [100, 400, 800],
+                          'max_depth'     : [4, 8, 16],
+                          'max_features'  : [sqrt_cn]}]
+        
     #scores = ['roc_auc']
-    score = params["score"]#'roc_auc'
+    #score = params["score"]#'roc_auc'
+    score = kwargs["score"]
     clf = GridSearchCV(RandomForestClassifier(),
                        rf_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
@@ -270,14 +257,26 @@ def RF(X_train, Y_train, params=None, model_dump=False) :
     return bestModel, bestParam
 
 #SVM
-def SVM(X_train, Y_train, params=None, model_dump=False) :
-
-    svc_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
-                     'C': [1, 10, 100, 1000]},
-                      {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+def SVM(X_train, Y_train, model_dump=False, comprehensive=False, **kwargs) :
+    if comprehensive : 
+        svc_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
+                         'C': [1, 100, 1000],
+                         'max_iter':[500]},
+                          {'kernel': ['linear'], 'C': [1, 100, 1000],
+                           'max_iter':[500]}]
+    else : 
+        svc_parameters = [{'kernel': ['rbf'],
+                           'gamma': [1e-3],
+                           'C': [10], 
+                           'max_iter':[500]},
+                          {'kernel': ['linear'], 
+                           'C': [10], 
+                           'max_iter':[500]}]
 
     #scores = ['roc_auc']
-    score = params["score"]#'roc_auc'
+    #score = params["score"]#'roc_auc'
+    
+    score = kwargs["score"]
     clf = GridSearchCV(SVC( probability=True),
                        svc_parameters, cv=3,
                        scoring= score ) #'%s_macro' % score)
@@ -287,9 +286,6 @@ def SVM(X_train, Y_train, params=None, model_dump=False) :
 
     print("SVC Grid Search runs " + str(toc - tic))
 
-
-
-
     print("Best parameters set found on development set:")
 
     bestModel = clf.best_estimator_
@@ -297,6 +293,26 @@ def SVM(X_train, Y_train, params=None, model_dump=False) :
 
     print(bestParam)
     return bestModel, bestParam
+
+#LR
+def LR(X_train, Y_train, model_dump=False, comprehensive=False, **kwargs) :
+
+    clf = LogisticRegression(tol=1e-5, random_state=0,
+                             solver='liblinear', max_iter=200)
+    tic = datetime.now()
+    clf.fit(X_train, Y_train)
+    toc = datetime.now()
+
+    print("LR fitting runs " + str(toc - tic))
+
+    print("Best parameters set found on development set:")
+
+    bestModel = clf
+    bestParam = clf.get_params()
+
+    print(bestParam)
+    return bestModel, bestParam
+
 
 def CutOff(eval_output, metric, thred, gt = True) :
     target = eval_output.loc[eval_output[metric] >= thred,:] if gt else eval_output.loc[eval_output[metric] < thred,:]
