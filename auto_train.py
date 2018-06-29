@@ -73,10 +73,10 @@ def train(*args, **kwargs) :
     try :
         data_ori0 = pd.read_csv(data_path + "/" + filename0 #/rex_up_features_sample0.csv"
         , low_memory=False, encoding=u'utf-8') \
-            .drop_duplicates(subset='relationshipno',keep='first')
+            .drop_duplicates(subset=keys,keep='first')
         
         data_ori1 = pd.read_csv(data_path + "/" + filename1
-        , low_memory=False, encoding=u'utf-8').drop_duplicates(subset='relationshipno',keep='first')
+        , low_memory=False, encoding=u'utf-8').drop_duplicates(subset=keys,keep='first')
     
         #axis = 0 means merge by column(same column join) 
         #axis = 1 means merge by row(same index join)
@@ -95,7 +95,7 @@ def train(*args, **kwargs) :
         clients_discretized = data_tmp.loc[:, :].copy()
         #nsamples = clients_discretized.shape[0]
     
-        features_num = clients_discretized[["relationshipno"]+colList_float + colList_days + colList_cnt].drop_duplicates( keep='first')
+        features_num = clients_discretized[[keys]+colList_float + colList_days + colList_cnt].drop_duplicates( keep='first')
         
         features_num = features_num[colList_float + colList_days + colList_cnt] \
                          .applymap(discretize.clean_cell) \
@@ -108,7 +108,7 @@ def train(*args, **kwargs) :
                          
         logger.info("numeric features processed, shaped as : " + str(features_num.shape))
     
-        features_cat=clients_discretized[["relationshipno"]+colList_unicode].drop_duplicates(keep='first')
+        features_cat=clients_discretized[[keys]+colList_unicode].drop_duplicates(keep='first')
         
         features_cat=features_cat[colList_unicode].fillna("0") \
                                .apply(lambda x: x.astype('category',ordered=True) \
@@ -124,7 +124,7 @@ def train(*args, **kwargs) :
     
         
         # Deal with label
-        label_data = clients_discretized[["relationshipno"]+[labels]].drop_duplicates(keep='first')
+        label_data = clients_discretized[[keys]+[labels]].drop_duplicates(keep='first')
         label_data = label_data[labels]
         
         assert sum([features_num.isnull().sum().sum(), 
@@ -200,8 +200,7 @@ def train(*args, **kwargs) :
         #features =  colList_unicode + colList_int + colList_float + colList_dup
         features = data_all.columns.values.tolist()
         features.remove( labels )
-        #features.remove( "osmf_hld:9.0"  )
-        #labels = "osmf_hld:9.0"
+        
         X_train, Y_train, X_test, Y_test = BuildDataSet(data_all, features, labels, 0.9,
                                                         oversampling=[0,oversampling_ratio])
         #print(X_train.head())
