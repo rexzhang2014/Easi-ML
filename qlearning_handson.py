@@ -89,4 +89,5 @@ def ql(Q0, R, A, alpha, gamma, s0, max_iter, max_step=99) :
             
     return Q, total_reward
 
-testQ, ttl_reward = ql(Q0, R, A, 0.5, 0.5, 0, 10000)
+if __name__ == "__main__" :
+  testQ, ttl_reward = ql(Q0, R, A, 0.5, 0.5, 0, 10000)
