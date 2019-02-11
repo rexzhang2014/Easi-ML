@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #%%
-import framework as fw
+from ../pipline import framework as fw
 import pandas as pd
 
 #%%

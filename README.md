@@ -1,4 +1,27 @@
-# Easi-ML
+# Run:
+v1.0:
+  pipline
+    preprocessing.py : transform datasets, eg. drop NaN, onehot for cat, normalization etc. 
+    fitting.py : models for fitting, supervised learning only. 
+    framework.py : workflow using prepare and fitting. Full modelling work is predefined, transparent to user. Therefore, user parameters merely control the functionality other than fitting techniques.
+    demo_titanic.py : train and select model for Titanic Survival dataset. Predict Survival or not. 
+    
+    tensorflow0.py : trying to add neural network to extend fitting functions, to be completed yet. 
+  data
+    state-of-art datasets for tranditional machine learning cases (no image or text data invovled, from kaggle site)
+  output
+    the selected best model for the dataset. 
+  util 
+    some global helpers. 
+
+v0:
+  bullshit
+
+test:
+  trying something new. like Q-learning, tensorflow etc. 
+
+
+# Easi-ML Value
 Someone are struggling with highly specialized machine learning concepts and tool-kits, while someone are giving up at the first glance of complicated programming language. 
 
 Some leading engineers try to build up Auto-ML systems, where models are trained and tuned all by themselves. 

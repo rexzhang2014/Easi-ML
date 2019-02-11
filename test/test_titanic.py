@@ -4,7 +4,7 @@ import pipline.framework as fw
 import pandas as pd
 import os
 
-os.chdir("F:\Project\GitClone\EasiML")
+# os.chdir("F:\Project\GitClone\EasiML")
 #%%
 data_ori = pd.read_csv("data/titanic_train.csv", low_memory=False, encoding=u'utf-8')
 data_pred = pd.read_csv("data/titanic_test.csv")
@@ -52,18 +52,18 @@ X1.to_csv('data/submission.csv', index_label='PassengerId')
 #model = fw.EasiML_Modeling(data_ori.iloc[:1000,:], params)
 #pred  = fw.EasiML_predict(model, data_ori.iloc[:1000,:])
 #%%
-#%%
+"""
 import tensorflow as tf
 BATCH_SIZE = 10
 TRAIN_STEPS = 100
 
 for k in datasets.X
-my_feature_columns = [
-    tf.feature_column.numeric_column(key='SepalLength'),
-    tf.feature_column.numeric_column(key='SepalWidth'),
-    tf.feature_column.numeric_column(key='PetalLength'),
-    tf.feature_column.numeric_column(key='PetalWidth')
-]
+    my_feature_columns = [
+        tf.feature_column.numeric_column(key='SepalLength'),
+        tf.feature_column.numeric_column(key='SepalWidth'),
+        tf.feature_column.numeric_column(key='PetalLength'),
+        tf.feature_column.numeric_column(key='PetalWidth')
+    ]
 
 
 #import tensorflow.estimator.inputs.numpy_input_fn
@@ -83,3 +83,4 @@ eval_result = classifier.evaluate(
     input_fn=lambda:eval_input_fn(X_test, Y_test, batch_size=BATCH_SIZE)
     )
 print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
+"""
